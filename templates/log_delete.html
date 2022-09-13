@@ -9,7 +9,11 @@
 
         <div class="mb-3">
           <p class="text-center">Are you sure you want to delete time log entry?</p>
-          <p class="text-center fw-bold">time log entry details</p>  <!-- TODO: add timelog details -->
+          <p class="text-center fw-bold">
+            <span class="me-1">{{ object.task.title }}</span>
+            <span class="me-1">{{ object.date }}</span>
+            <span class="me-1">{{ object.time }} h</span>
+          </p>
         </div>
 
         <div class="d-flex justify-content-center align-items-center">
