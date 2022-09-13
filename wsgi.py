@@ -6,7 +6,9 @@ This module exposes the WSGI runner as a module-level variable named
 
 """
 
-from flask import Flask
+from flask import abort, Flask
+
+from utils import get_log, logs
 
 application = Flask(__name__)
 
@@ -38,7 +40,7 @@ def logout():
 def log_list():
     """Time log list route"""
 
-    return "<h1>Time logs list</h1>"
+    return f"<h1>Time logs list</h1>{logs}"
 
 
 @application.route("/create/")
@@ -52,14 +54,22 @@ def log_create():
 def log_update(pk: int):
     """Update existing time log entry"""
 
-    return f"<h1>Update time log ID: {pk}</h1>"
+    log = get_log(pk)
+    if log:
+        return f"<h1>Update time log ID: {pk}</h1>{log}"
+
+    abort(404)
 
 
 @application.route("/delete/<int:pk>/")
 def log_delete(pk: int):
     """Delete existing time log entry"""
 
-    return f"<h1>Delete time log ID: {pk}</h1>"
+    log = get_log(pk)
+    if log:
+        return f"<h1>Delete time log ID: {pk}</h1>{log}"
+
+    abort(404)
 
 
 if __name__ == "__main__":
