@@ -1,0 +1,29 @@
+# following files and folders would not be added to the project repository
+
+# ide configs
+/.vscode/
+/.idea/
+
+# virtual environemts
+/.venv/
+/.env/
+/venv/
+/env/
+
+# python byte-compiled
+__pycache__
+
+# local database files
+pgdata/*
+pgsql/*
+*.sqlite3
+*.sqlite
+*.db
+
+# temporary files storage
+/temp/
+/tmp/
+
+# emacs cache and backup files
+\#*
+*~
