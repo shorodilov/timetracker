@@ -6,7 +6,7 @@ This module exposes the WSGI runner as a module-level variable named
 
 """
 
-from flask import abort, Flask
+from flask import abort, Flask, redirect, render_template, url_for
 
 from utils import get_log, logs
 
@@ -18,21 +18,23 @@ application = Flask(__name__)
 def signup():
     """New user registration route"""
 
-    return "<h1>New user registration</h1>"
+    return render_template("signup.html")
 
 
 @application.route("/signin/")
 def signin():
     """User login route"""
 
-    return "<h1>User login</h1>"
+    return render_template("signin.html")
 
 
 @application.route("/logout/")
 def logout():
     """User logout route"""
 
-    return "<h1>User logout</h1>"
+    redirect_to = url_for("log_list")
+
+    return redirect(redirect_to)
 
 
 # time logs routes
@@ -40,14 +42,14 @@ def logout():
 def log_list():
     """Time log list route"""
 
-    return f"<h1>Time logs list</h1>{logs}"
+    return render_template("log_list.html", object_list=logs)
 
 
 @application.route("/create/")
 def log_create():
     """Create a new time log entry"""
 
-    return "<h1>Create new time log</h1>"
+    return render_template("log_form.html")
 
 
 @application.route("/update/<int:pk>/")
@@ -56,7 +58,7 @@ def log_update(pk: int):
 
     log = get_log(pk)
     if log:
-        return f"<h1>Update time log ID: {pk}</h1>{log}"
+        return render_template("log_form.html", object=log)
 
     abort(404)
 
@@ -67,7 +69,7 @@ def log_delete(pk: int):
 
     log = get_log(pk)
     if log:
-        return f"<h1>Delete time log ID: {pk}</h1>{log}"
+        return render_template("log_delete.html", object=log)
 
     abort(404)
 
