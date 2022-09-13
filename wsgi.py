@@ -7,10 +7,16 @@ This module exposes the WSGI runner as a module-level variable named
 """
 
 from flask import abort, Flask, redirect, render_template, url_for
+from flask_migrate import Migrate
+from flask_sqlalchemy import SQLAlchemy
 
 from utils import get_log, logs
 
 application = Flask(__name__)
+application.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db.sqlite3"
+application.config["SECRET_KEY"] = "flask-secret-key"
+db = SQLAlchemy(application)
+migrate = Migrate(application, db)
 
 
 # authentication routes
