@@ -4,39 +4,20 @@
   <main class="row d-flex justify-content-center align-items-center">
     <div class="col col-lg-8">
       <ul class="list-group">
-        <li class="list-group-item list-group-item-action">
-          <div class="d-flex w-100 justify-content-between">
-            <h5 class="mb-1">Task #1 title</h5>
-            <div>
-              <a href="#" class="ms-1 btn btn-outline-primary">Update</a>
-              <a href="#" class="ms-1 btn btn-outline-danger">Delete</a>
+        {% for object in object_list %}
+          <li class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">{{ object.task.title }}</h5>
+              <div>
+                {# TODO: change identifier field refernce to "pk" #}
+                <a href="{{ url_for("log_update", pk=object.id ) }}" class="ms-1 btn btn-outline-primary">Update</a>
+                <a href="{{ url_for("log_delete", pk=object.id ) }}" class="ms-1 btn btn-outline-danger">Delete</a>
+              </div>
             </div>
-          </div>
-          <span class="me-md-5 me-3">August 24, 2022</span>
-          <span>2.5 h</span>
-        </li>
-        <li class="list-group-item list-group-item-action">
-          <div class="d-flex w-100 justify-content-between">
-            <h5 class="mb-1">Task #1 title</h5>
-            <div>
-              <a href="#" class="ms-1 btn btn-outline-primary">Update</a>
-              <a href="#" class="ms-1 btn btn-outline-danger">Delete</a>
-            </div>
-          </div>
-          <span class="me-md-5 me-3">August 25, 2022</span>
-          <span>1.5 h</span>
-        </li>
-        <li class="list-group-item list-group-item-action">
-          <div class="d-flex w-100 justify-content-between">
-            <h5 class="mb-1">Task #1 title</h5>
-            <div>
-              <a href="#" class="ms-1 btn btn-outline-primary">Update</a>
-              <a href="#" class="ms-1 btn btn-outline-danger">Delete</a>
-            </div>
-          </div>
-          <span class="me-md-5 me-3">August 26, 2022</span>
-          <span>0.5 h</span>
-        </li>
+            <span class="me-md-5 me-3">{{ object.date }}</span>
+            <span>{{ object.time }} h</span>
+          </li>
+        {% endfor %}
       </ul>
     </div>
   </main>
