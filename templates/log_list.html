@@ -1,117 +1,43 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
-        name="viewport">
-  <meta content="ie=edge" http-equiv="X-UA-Compatible">
-  <!-- TODO: add title block -->
-  <title>Time Reports | Time Tracker</title>
-  <link href="../static/favicon.ico" rel="shortcut icon" type="image/x-icon">
-  <link href="../static/style.css" rel="stylesheet">
-  <!--suppress SpellCheckingInspection -->
-  <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css"
-        integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" rel="stylesheet">
-</head>
-<body>
-
-<!-- TODO: move navbar to a separate HTML file for include -->
-<nav class="navbar navbar-expand-lg bg-light fixed-top">
-  <div class="container-fluid ms-5 me-5">
-    <span class="navbar-brand">Time Tracker</span>
-    <button aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
-            class="navbar-toggler" data-bs-target="#navbarContent" data-bs-toggle="collapse" type="button">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarContent">
-      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link" href="#">Time reports</a>   <!-- TODO: fix dead link -->
+{% extends "base.html" %}
+{% block title %}Time Reports | {{ super() }}{% endblock %}
+{% block container %}
+  <main class="row d-flex justify-content-center align-items-center">
+    <div class="col col-lg-8">
+      <ul class="list-group">
+        <li class="list-group-item list-group-item-action">
+          <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">Task #1 title</h5>
+            <div>
+              <a href="#" class="ms-1 btn btn-outline-primary">Update</a>
+              <a href="#" class="ms-1 btn btn-outline-danger">Delete</a>
+            </div>
+          </div>
+          <span class="me-md-5 me-3">August 24, 2022</span>
+          <span>2.5 h</span>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Create report</a>  <!-- TODO: fix dead link -->
+        <li class="list-group-item list-group-item-action">
+          <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">Task #1 title</h5>
+            <div>
+              <a href="#" class="ms-1 btn btn-outline-primary">Update</a>
+              <a href="#" class="ms-1 btn btn-outline-danger">Delete</a>
+            </div>
+          </div>
+          <span class="me-md-5 me-3">August 25, 2022</span>
+          <span>1.5 h</span>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Sign Up</a>        <!-- TODO: fix dead link -->
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Sign In</a>        <!-- TODO: fix dead link -->
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Logout</a>         <!-- TODO: fix dead link -->
+        <li class="list-group-item list-group-item-action">
+          <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">Task #1 title</h5>
+            <div>
+              <a href="#" class="ms-1 btn btn-outline-primary">Update</a>
+              <a href="#" class="ms-1 btn btn-outline-danger">Delete</a>
+            </div>
+          </div>
+          <span class="me-md-5 me-3">August 26, 2022</span>
+          <span>0.5 h</span>
         </li>
       </ul>
     </div>
-  </div>
-</nav>
-
-<div class="container mt-3">
-  <div class="vh-100">
-
-    <!-- TODO: move messages to a separate HTML file for include -->
-    <aside class="row d-flex justify-content-center align-items-center">
-      <div class="col col-lg-6">
-        <!-- TODO: adjust to get message category -->
-        <div class="alert alert-success alert-dismissible" role="alert">
-          <span>Success message</span>
-          <button aria-label="Close" class="btn-close" data-bs-dismiss="alert" type="button"></button>
-        </div>
-        <!-- TODO: remove the 2nd message, it's for demo only -->
-        <div class="alert alert-danger alert-dismissible" role="alert">
-          <span>Error message</span>
-          <button aria-label="Close" class="btn-close" data-bs-dismiss="alert" type="button"></button>
-        </div>
-      </div>
-    </aside>
-
-    <main class="row d-flex justify-content-center align-items-center">
-      <div class="col col-lg-8">
-        <ul class="list-group">
-          <li class="list-group-item list-group-item-action">
-            <div class="d-flex w-100 justify-content-between">
-              <h5 class="mb-1">Task #1 title</h5>
-              <div>
-                <a href="#" class="ms-1 btn btn-outline-primary">Update</a>
-                <a href="#" class="ms-1 btn btn-outline-danger">Delete</a>
-              </div>
-            </div>
-            <span class="me-md-5 me-3">August 24, 2022</span>
-            <span>2.5 h</span>
-          </li>
-          <li class="list-group-item list-group-item-action">
-            <div class="d-flex w-100 justify-content-between">
-              <h5 class="mb-1">Task #1 title</h5>
-              <div>
-                <a href="#" class="ms-1 btn btn-outline-primary">Update</a>
-                <a href="#" class="ms-1 btn btn-outline-danger">Delete</a>
-              </div>
-            </div>
-            <span class="me-md-5 me-3">August 25, 2022</span>
-            <span>1.5 h</span>
-          </li>
-          <li class="list-group-item list-group-item-action">
-            <div class="d-flex w-100 justify-content-between">
-              <h5 class="mb-1">Task #1 title</h5>
-              <div>
-                <a href="#" class="ms-1 btn btn-outline-primary">Update</a>
-                <a href="#" class="ms-1 btn btn-outline-danger">Delete</a>
-              </div>
-            </div>
-            <span class="me-md-5 me-3">August 26, 2022</span>
-            <span>0.5 h</span>
-          </li>
-        </ul>
-      </div>
-    </main>
-
-  </div>
-</div>
-
-<footer>
-
-</footer>
-<!--suppress SpellCheckingInspection -->
-<script crossorigin="anonymous" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
-        src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+  </main>
+{% endblock %}
