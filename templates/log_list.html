@@ -10,9 +10,8 @@
               <div class="d-flex w-100 justify-content-between">
                 <h5 class="mb-1">{{ object.task.title }}</h5>
                 <div>
-                  {# TODO: change identifier field refernce to "pk" #}
-                  <a href="{{ url_for("log_update", pk=object.id ) }}" class="ms-1 btn btn-outline-primary">Update</a>
-                  <a href="{{ url_for("log_delete", pk=object.id ) }}" class="ms-1 btn btn-outline-danger">Delete</a>
+                  <a href="{{ url_for("log_update", pk=object.pk ) }}" class="ms-1 btn btn-outline-primary">Update</a>
+                  <a href="{{ url_for("log_delete", pk=object.pk ) }}" class="ms-1 btn btn-outline-danger">Delete</a>
                 </div>
               </div>
               <span class="me-md-5 me-3">{{ object.date_reported|date }}</span>

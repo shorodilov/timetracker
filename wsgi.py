@@ -55,6 +55,10 @@ class UserModel(db.Model, UserMixin):
     last_name = db.Column(db.String(64), default="")
     logs = db.relationship("TimeLogModel", backref="reporter", lazy=True)
 
+    @property
+    def pk(self):
+        return self.id
+
     def __repr__(self) -> str:
         """Return a string representation of an instance"""
 
@@ -188,6 +192,10 @@ class TaskModel(db.Model):
     title = db.Column(db.String(128), nullable=False)
     logs = db.relationship("TimeLogModel", backref="task", lazy=True)
 
+    @property
+    def pk(self):
+        return self.id
+
     def __repr__(self) -> str:
         """Return a string representation of instance"""
 
@@ -215,6 +223,10 @@ class TimeLogModel(db.Model):
     reporter_id = db.Column(
         db.Integer, db.ForeignKey(UserModel.id), nullable=False
     )
+
+    @property
+    def pk(self):
+        return self.id
 
     @property
     def time_reported(self):
