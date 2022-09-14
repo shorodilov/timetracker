@@ -5,11 +5,20 @@ This module exposes the WSGI runner as a module-level variable named
 ``application``
 
 """
+
 import datetime
 
-from flask import abort, Flask, redirect, render_template, url_for
+from flask import abort, flash, Flask, redirect, render_template, url_for
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+from flask_wtf import FlaskForm
+from wtforms import (
+    BooleanField,
+    PasswordField,
+    StringField,
+    SubmitField
+)
+from wtforms.validators import DataRequired
 
 from utils import get_log, logs
 
@@ -46,9 +55,25 @@ class UserModel(db.Model):
 
         return fullname or self.username
 
+    def check_password(self, password: str) -> bool:
+        """Check passed raw password with user assigned"""
+
+        # TODO: add implementation
+        return True
+
 
 # authentication forms
-# TODO: add auth forms
+
+
+class SignInForm(FlaskForm):
+    """User login form"""
+
+    username = StringField("Username", [DataRequired()])
+    password = PasswordField("Password", [DataRequired()])
+    remember = BooleanField("Remember Me", default=True)
+
+    submit = SubmitField("Sign In")
+
 
 # authentication routes
 @application.route("/signup/")
@@ -58,11 +83,19 @@ def signup():
     return render_template("signup.html")
 
 
-@application.route("/signin/")
+@application.route("/signin/", methods=["GET", "POST"])
 def signin():
     """User login route"""
 
-    return render_template("signin.html")
+    form = SignInForm()
+    if form.validate_on_submit():
+        user = UserModel.query.filter_by(username=form.username.data).first()
+        if user is not None and user.check_password(form.password.data):
+            ...  # TODO: login user
+        else:
+            flash("Incorrect username or password. Please check.", "danger")
+
+    return render_template("signin.html", form=form)
 
 
 @application.route("/logout/")
