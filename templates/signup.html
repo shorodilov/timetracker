@@ -4,49 +4,96 @@
   <main class="row d-flex justify-content-center align-items-center h-100">
     <div class="col-md-3 col-6">
 
-      <!-- TODO: change form method to POST -->
-      <form>
-        <!-- TODO: add CSRF protection field -->
-        <div class="form-floating mb-3">
-          <input class="form-control" id="username" name="username" placeholder="Username"
-                 type="text">
-          <label for="username" class="form-label">Username</label>
-          </div>
-          <div class="form-floating mb-3">
-            <input class="form-control" id="first_name" name="first_name" placeholder="First Name" type="text">
-            <label class="form-label" for="first_name">First Name</label>
-          </div>
-          <div class="form-floating mb-3">
-            <input class="form-control" id="last_name" name="last_name" placeholder="Last Name" type="text">
-            <label class="form-label" for="last_name">Last Name</label>
-          </div>
-          <div class="form-floating mb-3">
-            <input class="form-control form-control is-invalid" id="email" name="email" placeholder="Email"
-                   type="email" value="sample@email.org"> <!-- TODO: remove example value -->
-            <label for="email" class="form-label">Email</label>
-            <div class="invalid-feedback"> <!-- error message example -->
-              <span>This email is already registered.</span>
+      <form method="post">
+        {{ form.hidden_tag() }}
+        <div class="form-floating mb-3">  <!-- username input -->
+          {% if form.username.errors %}
+            {{ form.username(class="form-control is-invalid") }}
+            <div class="invalid-feedback">
+              {% for error in form.username.errors %}
+                <span>{{ error }}</span>
+              {% endfor %}
             </div>
-          </div>
-          <div class="form-floating mb-3">
-            <input class="form-control" id="password" name="password" placeholder="Password"
-                   type="password">
-            <label for="password" class="form-label">Password</label>
-          </div>
-          <div class="form-floating mb-3">
-            <input class="form-control" id="confirm_password" name="confirm_password" placeholder="Confirm Password"
-                   type="password">
-            <label for="confirm_password" class="form-label">Confirm Password</label>
-          </div>
-          <div class="d-flex justify-content-center align-items-center">
-            <button class="btn btn-lg btn-block btn-primary">Sign Up</button>
-          </div>
-          <div class="d-flex justify-content-center mt-4">
-            <!-- TODO: fix dead link to sign in page -->
-            <p class="text-muted">Already has an account?<a class="text-body fw-bold ms-1" href="#">Sign In</a>.</p>
-          </div>
-        </form>
+          {% else %}
+            {{ form.username(class="form-control", placeholder="Username") }}
+            {{ form.username.label(class="form-label") }}
+          {% endif %}
+        </div>
+        <div class="form-floating mb-3">  <!-- first name input -->
+          {% if form.first_name.errors %}
+            {{ form.first_name(class="form-control is-invalid") }}
+            <div class="invalid-feedback">
+              {% for error in form.first_name.errors %}
+                <span>{{ error }}</span>
+              {% endfor %}
+            </div>
+          {% else %}
+            {{ form.first_name(class="form-control", placeholder="First Name") }}
+            {{ form.first_name.label(class="form-label") }}
+          {% endif %}
+        </div>
+        <div class="form-floating mb-3">  <!-- last name input -->
+          {% if form.last_name.errors %}
+            {{ form.last_name(class="form-control is-invalid") }}
+            <div class="invalid-feedback">
+              {% for error in form.last_name.errors %}
+                <span>{{ error }}</span>
+              {% endfor %}
+            </div>
+          {% else %}
+            {{ form.last_name(class="form-control", placeholder="Last Name") }}
+            {{ form.last_name.label(class="form-label") }}
+          {% endif %}
+        </div>
+        <div class="form-floating mb-3">  <!-- email input -->
+          {% if form.email.errors %}
+            {{ form.email(class="form-control is-invalid") }}
+            <div class="invalid-feedback">
+              {% for error in form.email.errors %}
+                <span>{{ error }}</span>
+              {% endfor %}
+            </div>
+          {% else %}
+            {{ form.email(class="form-control", placeholder="Email") }}
+            {{ form.email.label(class="form-label") }}
+          {% endif %}
+        </div>
+        <div class="form-floating mb-3">  <!-- password input -->
+          {% if form.password.errors %}
+            {{ form.password(class="form-control is-invalid") }}
+            <div class="invalid-feedback">
+              {% for error in form.password.errors %}
+                <span>{{ error }}</span>
+              {% endfor %}
+            </div>
+          {% else %}
+            {{ form.password(class="form-control", placeholder="Password") }}
+            {{ form.password.label(class="form-label") }}
+          {% endif %}
+        </div>
+        <div class="form-floating mb-3">  <!-- confirm password input -->
+          {% if form.confirm_password.errors %}
+            {{ form.confirm_password(class="form-control is-invalid") }}
+            <div class="invalid-feedback">
+              {% for error in form.confirm_password.errors %}
+                <span>{{ error }}</span>
+              {% endfor %}
+            </div>
+          {% else %}
+            {{ form.confirm_password(class="form-control", placeholder="Confirm Password") }}
+            {{ form.confirm_password.label(class="form-label") }}
+          {% endif %}
+        </div>
+        <div class="d-flex justify-content-center align-items-center">
+          {{ form.submit(class="btn btn-block btn-lg btn-primary") }}
+        </div>
+        <div class="d-flex justify-content-center mt-4">
+          <p class="text-muted">Already has an account?
+            <a class="text-body fw-bold ms-1" href="{{ url_for("signin") }}">Sign In</a>.
+          </p>
+        </div>
+      </form>
 
-      </div>
-    </main>
+    </div>
+  </main>
 {% endblock %}
