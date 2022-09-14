@@ -3,27 +3,49 @@
 {% block container %}
   <main class="row d-flex justify-content-center align-items-center h-100">
     <div class="col col-lg-8">
-      <!-- TODO: change form method to POST -->
-      <form>
-        <!-- TODO: add CSRF protection field -->
 
+      <form method="post">
+        {{ form.hidden_tag() }}
         <div class="mb-3">
-          <label class="form-label" for="task_uid">Task</label>
-          <select class="form-control" id="task_uid" name="task_uid">
-            <option value="cb00160f-1582-4ae2-9dfe-4471869650ae">Task #1 title</option>
-            <option value="ce302343-d28c-4375-a451-2c706db0b2d2">Task #2 title</option>
-            <option value="f198fa2f-d864-45a6-9a39-2426473eb664">Task #3 title</option>
-          </select>
+          {% if form.task.errors %}
+            {{ form.task(class="form-control is-invalid") }}
+            <div class="invalid-feedback">
+              {% for error in form.task.errors %}
+                <span>{{ error }}</span>
+              {% endfor %}
+            </div>
+          {% else %}
+            {{ form.task.label(class="form-label") }}
+            {{ form.task(class="form-control") }}
+          {% endif %}
         </div>
 
         <div class="mb-3">
-          <label class="form-label" for="value">Time spent</label>
-          <input class="form-control" id="value" name="value" step="0.1" type="number">
+          {% if form.time_reported.errors %}
+            {{ form.time_reported(class="form-control is-invalid") }}
+            <div class="invalid-feedback">
+              {% for error in form.time_reported.errors %}
+                <span>{{ error }}</span>
+              {% endfor %}
+            </div>
+          {% else %}
+            {{ form.time_reported.label(class="form-label") }}
+            {{ form.time_reported(class="form-control", step=0.1) }}
+          {% endif %}
         </div>
 
         <div class="mb-3">
-          <label class="form-label" for="date">Date</label>
-          <input class="form-control" id="date" name="date" type="date">
+          {% if form.date_reported.errors %}
+            {{ form.date_reported(class="form-control is-invalid") }}
+            <div class="invalid-feedback">
+              {% for error in form.date_reported.errors %}
+                <span>{{ error }}</span>
+              {% endfor %}
+            </div>
+          {% else %}
+            {{ form.date_reported.label(class="form-label") }}
+            {{ form.date_reported(class="form-control") }}
+          {% endif %}
         </div>
 
         <div class="d-flex justify-content-center align-items-center">
