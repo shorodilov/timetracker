@@ -4,37 +4,54 @@
   <main class="row d-flex justify-content-center align-items-center h-100">
     <div class="col-md-3 col-6">
 
-      <!-- TODO: change form method to POST -->
-      <form>
-        <!-- TODO: add CSRF protection field -->
+      <form method="post">
+        {{ form.hidden_tag() }}
         <div class="form-floating mb-3">
-          <input class="form-control" id="username" name="username" placeholder="Username"
-                 type="text">
-          <label for="username" class="form-label">Username</label>
-          </div>
-          <div class="form-floating mb-3">
-            <input class="form-control" id="password" name="password" placeholder="Password"
-                   type="password">
-            <label for="password" class="form-label">Password</label>
-          </div>
-          <div class="d-lg-flex d-block justify-content-center align-items-center text-center mb-3">
-            <div class="mb-md-0 mb-2">
-              <input type="checkbox" id="remember" checked>
-              <label for="remember">Remember me</label>
+          {% if form.username.errors %}
+            {{ form.username(class="form-control is-invalid") }}
+            <div class="invalid-feedback">
+              {% for error in form.username.errors %}
+                <span>{{ error }}</span>
+              {% endfor %}
             </div>
-            <div class="ms-lg-5">
-              <a href="#">Forgot password?</a>
+          {% else %}
+            {{ form.username(class="form-control", placeholder="Username") }}
+            {{ form.username.label(class="form-label") }}
+          {% endif %}
+        </div>
+        <div class="form-floating mb-3">
+          {% if form.password.errors %}
+            {{ form.password(class="form-control is-invalid") }}
+            <div class="invalid-feedback">
+              {% for error in form.password.errors %}
+                <span>{{ error }}</span>
+              {% endfor %}
             </div>
+          {% else %}
+            {{ form.password(class="form-control", placeholder="Password") }}
+            {{ form.password.label(class="form-label") }}
+          {% endif %}
+        </div>
+        <div class="d-lg-flex d-block justify-content-center align-items-center text-center mb-3">
+          <div class="mb-md-0 mb-2">
+            {{ form.remember }}
+            {{ form.remember.label }}
           </div>
-          <div class="d-flex justify-content-center align-items-center">
-            <button class="btn btn-lg btn-block btn-primary">Sign In</button>
+          <div class="ms-lg-5">
+            <a href="#">Forgot password?</a>  <!-- TODO: fix dead link -->
           </div>
-          <div class="d-flex justify-content-center mt-4">
-            <!-- TODO: fix dead link to sign up page -->
-            <p class="text-muted">Not a member?<a class="text-body fw-bold ms-1" href="#">Sign&nbsp;up</a>.</p>
-          </div>
-        </form>
+        </div>
+        <div class="d-flex justify-content-center align-items-center">
+          {{ form.submit(class="btn btn-block btn-lg btn-primary") }}
+        </div>
+        <div class="d-flex justify-content-center mt-4">
+          <!-- TODO: fix dead link to sign up page -->
+          <p class="text-muted">Not a member?
+            <a class="text-body fw-bold ms-1" href="{{ url_for("signup") }}">Sign&nbsp;up</a>.
+          </p>
+        </div>
+      </form>
 
-      </div>
-    </main>
+    </div>
+  </main>
 {% endblock %}

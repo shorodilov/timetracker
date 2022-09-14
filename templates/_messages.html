@@ -1,15 +1,14 @@
-<!-- TODO: should get flash messages as input -->
-<aside class="row d-flex justify-content-center align-items-center">
-  <div class="col col-lg-6">
-    <!-- TODO: adjust to get message category -->
-    <div class="alert alert-success alert-dismissible" role="alert">
-      <span>Success message</span>
-      <button aria-label="Close" class="btn-close" data-bs-dismiss="alert" type="button"></button>
-    </div>
-    <!-- TODO: remove the 2nd message, it's for demo only -->
-    <div class="alert alert-danger alert-dismissible" role="alert">
-      <span>Error message</span>
-      <button aria-label="Close" class="btn-close" data-bs-dismiss="alert" type="button"></button>
-    </div>
-  </div>
-</aside>
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <aside class="row d-flex justify-content-center align-items-center">
+      <div class="col col-lg-6">
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible" role="alert">
+            <span>{{ message }}</span>
+            <button aria-label="Close" class="btn-close" data-bs-dismiss="alert" type="button"></button>
+          </div>
+        {% endfor %}
+      </div>
+    </aside>
+  {% endif %}
+{% endwith %}
