@@ -227,6 +227,17 @@ class TimeLogModel(db.Model):
                 f"date_reported={self.date}")
 
 
+# time logs formatters
+@application.template_filter("date")
+def format_date(value: datetime.date, formatter: str = "%b %d, %y") -> str:
+    return value.strftime(formatter)
+
+
+@application.template_filter("decimal")
+def format_decimal(value: float, places: int = 2) -> str:
+    return f"{value:.{places}f}"
+
+
 # time logs forms
 # TODO: add log forms
 

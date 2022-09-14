@@ -15,8 +15,8 @@
                   <a href="{{ url_for("log_delete", pk=object.id ) }}" class="ms-1 btn btn-outline-danger">Delete</a>
                 </div>
               </div>
-              <span class="me-md-5 me-3">{{ object.date_reported }}</span>
-              <span>{{ object.time_reported }} h</span>
+              <span class="me-md-5 me-3">{{ object.date_reported|date }}</span>
+              <span>{{ object.time_reported|decimal }} h</span>
             </li>
           {% endfor %}
         </ul>
