@@ -15,16 +15,14 @@ from flask_login import (
     login_user,
     LoginManager,
     logout_user,
-    UserMixin
+    UserMixin,
 )
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
 from wtforms import (
-    BooleanField,
-    EmailField, PasswordField,
-    StringField,
-    SubmitField
+    BooleanField, DateField, DecimalField, EmailField, PasswordField,
+    SelectField, StringField, SubmitField
 )
 from wtforms.validators import DataRequired, EqualTo, Length, ValidationError
 
@@ -188,6 +186,16 @@ class TaskModel(db.Model):
     title = db.Column(db.String(128), nullable=False)
     logs = db.relationship("TimeLogModel", backref="task", lazy=True)
 
+    def __repr__(self) -> str:
+        """Return a string representation of instance"""
+
+        return f"<TaskModel(title='{self.title}')>"
+
+    def __str__(self) -> str:
+        """Return a string version of an instance"""
+
+        return self.title
+
 
 class TimeLogModel(db.Model):
     """Time log model implementation"""
@@ -239,7 +247,13 @@ def format_decimal(value: float, places: int = 2) -> str:
 
 
 # time logs forms
-# TODO: add log forms
+class TimeLogForm(FlaskForm):
+    """Time log report form implementation"""
+
+    task = SelectField()
+    time_reported = DecimalField
+    date_reported = DateField
+
 
 # time logs routes
 @application.route("/")
