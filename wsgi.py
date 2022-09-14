@@ -10,7 +10,13 @@ import datetime
 
 from flask import abort, flash, Flask, redirect, render_template, url_for
 from flask_bcrypt import Bcrypt
-from flask_login import login_user, LoginManager, logout_user, UserMixin
+from flask_login import (
+    current_user,
+    login_user,
+    LoginManager,
+    logout_user,
+    UserMixin
+)
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
@@ -21,8 +27,6 @@ from wtforms import (
     SubmitField
 )
 from wtforms.validators import DataRequired, EqualTo, Length, ValidationError
-
-from utils import get_log, logs
 
 application = Flask(__name__)
 application.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db.sqlite3"
@@ -49,6 +53,7 @@ class UserModel(db.Model, UserMixin):
     password = db.Column(db.String(255), nullable=False)
     first_name = db.Column(db.String(64), default="")
     last_name = db.Column(db.String(64), default="")
+    logs = db.relationship("TimeLogModel", backref="reporter", lazy=True)
 
     def __repr__(self) -> str:
         """Return a string representation of an instance"""
@@ -175,6 +180,15 @@ def get_current_date() -> datetime.date:
     return get_current_timestamp().date()
 
 
+class TaskModel(db.Model):
+    """Task model implementation"""
+
+    __tablename__ = "task"
+    id = db.Column(db.Integer, primary_key=True)  # TODO: change to UUID
+    title = db.Column(db.String(128), nullable=False)
+    logs = db.relationship("TimeLogModel", backref="task", lazy=True)
+
+
 class TimeLogModel(db.Model):
     """Time log model implementation"""
 
@@ -184,9 +198,21 @@ class TimeLogModel(db.Model):
     date = db.Column(
         "date_reported", db.Date, nullable=False, default=get_current_date
     )
-    # TODO: fix normalization
-    task_uid = db.Column(db.String(32), nullable=False)
-    task_title = db.Column(db.String(128), nullable=False)
+
+    task_id = db.Column(
+        db.Integer, db.ForeignKey(TaskModel.id), nullable=False
+    )
+    reporter_id = db.Column(
+        db.Integer, db.ForeignKey(UserModel.id), nullable=False
+    )
+
+    @property
+    def time_reported(self):
+        return self.value
+
+    @property
+    def date_reported(self):
+        return self.date
 
     def __repr__(self) -> str:
         """Return a string representation of an instance"""
@@ -196,12 +222,9 @@ class TimeLogModel(db.Model):
     def __str__(self) -> str:
         """Return a string version of an instance"""
 
-        reported = {
-            "time_reported": self.value,
-            "date_reported": self.date
-        }
-
-        return f"task_uid={self.task_uid}, {reported}"
+        return (f"task_title={self.task.title}, "
+                f"time_reported={self.value}, "
+                f"date_reported={self.date}")
 
 
 # time logs forms
@@ -212,7 +235,12 @@ class TimeLogModel(db.Model):
 def log_list():
     """Time log list route"""
 
-    return render_template("log_list.html", object_list=logs)
+    if current_user.is_authenticated:
+        object_list = current_user.logs
+    else:
+        object_list = []
+
+    return render_template("log_list.html", object_list=object_list)
 
 
 @application.route("/create/")
@@ -226,7 +254,7 @@ def log_create():
 def log_update(pk: int):
     """Update existing time log entry"""
 
-    log = get_log(pk)
+    log = TimeLogModel.query.get(pk)
     if log:
         return render_template("log_form.html", object=log)
 
@@ -237,7 +265,7 @@ def log_update(pk: int):
 def log_delete(pk: int):
     """Delete existing time log entry"""
 
-    log = get_log(pk)
+    log = TimeLogModel.query.get(pk)
     if log:
         return render_template("log_delete.html", object=log)
 
