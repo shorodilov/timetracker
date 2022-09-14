@@ -9,6 +9,8 @@ This module exposes the WSGI runner as a module-level variable named
 import datetime
 
 from flask import abort, flash, Flask, redirect, render_template, url_for
+from flask_bcrypt import Bcrypt
+from flask_login import login_user, LoginManager, logout_user, UserMixin
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
@@ -27,10 +29,17 @@ application.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db.sqlite3"
 application.config["SECRET_KEY"] = "flask-secret-key"
 db = SQLAlchemy(application)
 migrate = Migrate(application, db)
+bcrypt = Bcrypt(application)
+login_manager = LoginManager(application)
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return UserModel.query.get(int(user_id))
 
 
 # authentication models
-class UserModel(db.Model):
+class UserModel(db.Model, UserMixin):
     """User model implementation"""
 
     __tablename__ = "auth_user"
@@ -58,14 +67,13 @@ class UserModel(db.Model):
     def check_password(self, password: str) -> bool:
         """Check passed raw password with user assigned"""
 
-        # TODO: add implementation
+        return bcrypt.check_password_hash(self.password, password)
 
     @staticmethod
     def generate_hashed_password(raw_password: str) -> str:
         """Return hashed password"""
 
-        # TODO: add implementation
-        return raw_password
+        return bcrypt.generate_password_hash(raw_password)
 
 
 # authentication forms
@@ -113,6 +121,7 @@ def signup():
 
     form = SignUpForm()
     if form.validate_on_submit():
+        # noinspection PyArgumentList
         db.session.add(
             UserModel(
                 username=form.username.data,
@@ -137,7 +146,10 @@ def signin():
     if form.validate_on_submit():
         user = UserModel.query.filter_by(username=form.username.data).first()
         if user is not None and user.check_password(form.password.data):
-            ...  # TODO: login user
+            login_user(user, remember=form.remember.data)
+
+            return redirect(url_for("log_list"))
+
         else:
             flash("Incorrect username or password. Please check.", "danger")
 
@@ -148,6 +160,7 @@ def signin():
 def logout():
     """User logout route"""
 
+    logout_user()
     redirect_to = url_for("log_list")
 
     return redirect(redirect_to)
