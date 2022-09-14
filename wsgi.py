@@ -9,20 +9,12 @@ This module exposes the WSGI runner as a module-level variable named
 import datetime
 
 from flask import (
-    flash,
-    Flask,
-    redirect,
-    render_template,
-    request,
-    url_for,
+    abort, flash, Flask, redirect, render_template, request, url_for
 )
 from flask_bcrypt import Bcrypt
 from flask_login import (
-    current_user,
-    login_user,
-    LoginManager,
-    logout_user,
-    UserMixin,
+    current_user, login_required, login_user, LoginManager, logout_user,
+    UserMixin
 )
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
@@ -40,6 +32,9 @@ db = SQLAlchemy(application)
 migrate = Migrate(application, db)
 bcrypt = Bcrypt(application)
 login_manager = LoginManager(application)
+
+
+# TODO: setup login view for the login manager instance
 
 
 @login_manager.user_loader
@@ -297,8 +292,8 @@ def log_list():
     return render_template("log_list.html", object_list=object_list)
 
 
-# TODO: login required
 @application.route("/create/", methods=["GET", "POST"])
+@login_required
 def log_create():
     """Create a new time log entry"""
 
@@ -323,12 +318,15 @@ def log_create():
     return render_template("log_form.html", form=form)
 
 
-# TODO: login required
 @application.route("/update/<int:pk>/", methods=["GET", "POST"])
+@login_required
 def log_update(pk: int):
     """Update existing time log entry"""
 
-    log = TimeLogModel.query.get_or_404(pk)
+    log: TimeLogModel = TimeLogModel.query.get_or_404(pk)
+
+    if log.reporter_id != current_user.id:
+        abort(403)
 
     form = TimeLogForm()
     if form.validate_on_submit():
@@ -345,12 +343,16 @@ def log_update(pk: int):
     return render_template("log_form.html", form=form)
 
 
-# TODO: login required
 @application.route("/delete/<int:pk>/", methods=["GET", "POST"])
+@login_required
 def log_delete(pk: int):
     """Delete existing time log entry"""
 
-    log = TimeLogModel.query.get_or_404(pk)
+    log: TimeLogModel = TimeLogModel.query.get_or_404(pk)
+
+    if log.reporter_id != current_user.id:
+        abort(403)
+
     if request.method == "POST":
         db.session.delete(log)
         db.session.commit()
