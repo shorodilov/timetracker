@@ -3,21 +3,18 @@
 {% block container %}
   <main class="row d-flex justify-content-center align-items-center h-100">
     <div class="col col-lg-8">
-      <!-- TODO: change form method to POST -->
-      <form>
-        <!-- TODO: add CSRF protection field -->
-
+      <form method="post">
         <div class="mb-3">
           <p class="text-center">Are you sure you want to delete time log entry?</p>
           <p class="text-center fw-bold">
             <span class="me-1">{{ object.task.title }}</span>
-            <span class="me-1">{{ object.date }}</span>
-            <span class="me-1">{{ object.time }} h</span>
+            <span class="me-1">{{ object.date_reported|date }}</span>
+            <span class="me-1">{{ object.time_reported|decimal }} h</span>
           </p>
         </div>
 
         <div class="d-flex justify-content-center align-items-center">
-          <a href="#" class="btn btn-lg btn-block btn-secondary">Cancel</a>  <!-- TODO: fix dead link -->
+          <a href="{{ url_for("log_list") }}" class="btn btn-lg btn-block btn-secondary">Cancel</a>
           <button class="ms-3 btn btn-lg btn-block btn-danger">Delete</button>
         </div>
       </form>

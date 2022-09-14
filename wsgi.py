@@ -8,7 +8,14 @@ This module exposes the WSGI runner as a module-level variable named
 
 import datetime
 
-from flask import abort, flash, Flask, redirect, render_template, url_for
+from flask import (
+    flash,
+    Flask,
+    redirect,
+    render_template,
+    request,
+    url_for,
+)
 from flask_bcrypt import Bcrypt
 from flask_login import (
     current_user,
@@ -250,9 +257,31 @@ def format_decimal(value: float, places: int = 2) -> str:
 class TimeLogForm(FlaskForm):
     """Time log report form implementation"""
 
-    task = SelectField()
-    time_reported = DecimalField
-    date_reported = DateField
+    task_choices = [(task.id, task.title) for task in TaskModel.query.all()]
+
+    task = SelectField("Task", [DataRequired()], choices=task_choices)
+    time_reported = DecimalField("Time spent", [DataRequired()])
+    date_reported = DateField(
+        "Date", [DataRequired()], default=get_current_date
+    )
+
+    # noinspection PyMethodMayBeStatic
+    def validate_task(self, task: SelectField):
+        task_id = int(task.data)
+        if TaskModel.query.get(task_id) is None:
+            raise ValidationError("Could not find task.")
+
+    # noinspection PyMethodMayBeStatic
+    def validate_time_reported(self, time_reported: DecimalField):
+        if time_reported.data < 0.1:
+            raise ValidationError("Minimum value is 0.1")
+        if time_reported.data > 24:
+            raise ValidationError("Maximum value is 24")
+
+    # noinspection PyMethodMayBeStatic
+    def validate_date_reported(self, date_reported: DateField):
+        if date_reported.data > get_current_date():
+            raise ValidationError("Future reports are restricted.")
 
 
 # time logs routes
@@ -268,33 +297,68 @@ def log_list():
     return render_template("log_list.html", object_list=object_list)
 
 
-@application.route("/create/")
+# TODO: login required
+@application.route("/create/", methods=["GET", "POST"])
 def log_create():
     """Create a new time log entry"""
 
-    return render_template("log_form.html")
+    form = TimeLogForm()
+    if form.validate_on_submit():
+        db.session.add(
+            TimeLogModel(
+                reporter_id=current_user.id,
+                task_id=int(form.task.data),
+                value=form.time_reported.data,
+                date=form.date_reported.data,
+            )
+        )
+        db.session.commit()
+        flash(
+            f"Reported time: {format_decimal(form.time_reported.data)}",
+            "success"
+        )
+
+        return redirect(url_for("log_list"))
+
+    return render_template("log_form.html", form=form)
 
 
-@application.route("/update/<int:pk>/")
+# TODO: login required
+@application.route("/update/<int:pk>/", methods=["GET", "POST"])
 def log_update(pk: int):
     """Update existing time log entry"""
 
-    log = TimeLogModel.query.get(pk)
-    if log:
-        return render_template("log_form.html", object=log)
+    log = TimeLogModel.query.get_or_404(pk)
 
-    abort(404)
+    form = TimeLogForm()
+    if form.validate_on_submit():
+        log.task_id = int(form.task.data)
+        log.value = form.time_reported.data
+        log.date = form.date_reported.data
+
+        db.session.add(log)
+        db.session.commit()
+        flash("Time report has been updated", "success")
+
+        return redirect(url_for("log_list"))
+
+    return render_template("log_form.html", form=form)
 
 
-@application.route("/delete/<int:pk>/")
+# TODO: login required
+@application.route("/delete/<int:pk>/", methods=["GET", "POST"])
 def log_delete(pk: int):
     """Delete existing time log entry"""
 
-    log = TimeLogModel.query.get(pk)
-    if log:
-        return render_template("log_delete.html", object=log)
+    log = TimeLogModel.query.get_or_404(pk)
+    if request.method == "POST":
+        db.session.delete(log)
+        db.session.commit()
+        flash("Time log has been deleted", "success")
 
-    abort(404)
+        return redirect(url_for("log_list"))
+
+    return render_template("log_delete.html", object=log)
 
 
 if __name__ == "__main__":
