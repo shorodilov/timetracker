@@ -264,9 +264,7 @@ def format_decimal(value: float, places: int = 2) -> str:
 class TimeLogForm(FlaskForm):
     """Time log report form implementation"""
 
-    task_choices = [(task.id, task.title) for task in TaskModel.query.all()]
-
-    task = SelectField("Task", [DataRequired()], choices=task_choices)
+    task = SelectField("Task", [DataRequired()], coerce=int)
     time_reported = DecimalField("Time spent", [DataRequired()])
     date_reported = DateField(
         "Date", [DataRequired()], default=get_current_date
@@ -309,7 +307,11 @@ def log_list():
 def log_create():
     """Create a new time log entry"""
 
+    task_choices = [(task.id, task.title) for task in TaskModel.query.all()]
+
     form = TimeLogForm()
+    form.task.choices = task_choices
+
     if form.validate_on_submit():
         db.session.add(
             TimeLogModel(
@@ -340,7 +342,11 @@ def log_update(pk: int):
     if log.reporter_id != current_user.id:
         abort(403)
 
-    form = TimeLogForm()
+    task_choices = [(task.id, task.title) for task in TaskModel.query.all()]
+
+    form = TimeLogForm(obj=log)
+    form.task.choices = task_choices
+
     if form.validate_on_submit():
         log.task_id = int(form.task.data)
         log.value = form.time_reported.data
